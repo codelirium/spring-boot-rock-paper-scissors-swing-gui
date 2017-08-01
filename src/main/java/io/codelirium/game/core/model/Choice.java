@@ -3,9 +3,9 @@ package io.codelirium.game.core.model;
 
 public interface Choice {
 
-	abstract int getId();
+	int getId();
 
-	abstract String getName();
+	String getName();
 
 	Result gameOnWith(Choice choice);
 }
