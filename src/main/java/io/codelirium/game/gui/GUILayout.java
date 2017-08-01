@@ -1,6 +1,6 @@
 package io.codelirium.game.gui;
 
-import io.codelirium.game.core.GameStrategies;
+import io.codelirium.game.core.GameMode;
 import io.codelirium.game.core.model.Choice;
 import io.codelirium.game.core.model.impl.Paper;
 import io.codelirium.game.core.model.impl.Rock;
@@ -24,14 +24,14 @@ import static java.util.Objects.nonNull;
 @Component
 public class GUILayout extends JFrame {
 
-	private GameStrategies gameStrategies;
+	private GameMode gameMode;
 	private JPanel selectionPanel;
 	private JPanel statusPanel;
 
 
 	@Autowired
-	public GUILayout(GameStrategies gameStrategies) {
-		this.gameStrategies = gameStrategies;
+	public GUILayout(GameMode gameMode) {
+		this.gameMode = gameMode;
 	}
 
 
@@ -139,8 +139,8 @@ public class GUILayout extends JFrame {
 
 	private void displayGameResults(Option<Choice> optionChoice) {
 
-		List<Choice> choices = optionChoice.empty() ? gameStrategies.computerVSComputerStrategy().play(optionChoice) :
-																						gameStrategies.humanVSComputerStrategy().play(optionChoice);
+		List<Choice> choices = optionChoice.empty() ? gameMode.computerVSComputerGame().play(optionChoice) :
+																									gameMode.humanVSComputerGame().play(optionChoice);
 
 		String padding = "\t\t\t\t\t";
 		String playerOneString = optionChoice.empty() ? "Computer 1" : "Human 1";

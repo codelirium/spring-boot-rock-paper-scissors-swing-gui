@@ -6,7 +6,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static io.codelirium.game.core.GameStrategies.getRandomChoice;
+import static io.codelirium.game.core.GameMode.getRandomChoice;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -16,19 +16,19 @@ public class GameTest {
 
 	@Test
 	public void testHumanVsComputerGameWhenHumanMakesAChoice() {
-		GameStrategy gameStrategy = new GameStrategies().humanVSComputerStrategy();
-		assertThat(gameStrategy.play(new Some<>(getRandomChoice())).size(), is(2));
+		Game game = new GameMode().humanVSComputerGame();
+		assertThat(game.play(new Some<>(getRandomChoice())).size(), is(2));
 	}
 
 	@Test
 	public void testHumanVsComputerGameWhenHumanDoesNotMakeAChoice() {
-		GameStrategy gameStrategy = new GameStrategies().humanVSComputerStrategy();
-		assertThat(gameStrategy.play(new None<>()).size(), is(2));
+		Game game = new GameMode().humanVSComputerGame();
+		assertThat(game.play(new None<>()).size(), is(2));
 	}
 
 	@Test
 	public void testComputerVsComputerGame() {
-		GameStrategy gameStrategy = new GameStrategies().computerVSComputerStrategy();
-		assertThat(gameStrategy.play(new None<>()).size(), is(2));
+		Game game = new GameMode().computerVSComputerGame();
+		assertThat(game.play(new None<>()).size(), is(2));
 	}
 }

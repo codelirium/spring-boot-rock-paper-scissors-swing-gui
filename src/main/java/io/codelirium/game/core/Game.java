@@ -6,7 +6,7 @@ import io.codelirium.game.core.option.Option;
 import java.util.List;
 
 
-public interface GameStrategy {
+public interface Game {
 
 	List<Choice> play(Option<Choice> option);
 

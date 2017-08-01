@@ -13,21 +13,21 @@ import java.util.Random;
 
 
 @Component
-public class GameStrategies {
+public class GameMode {
 
 	private static List<Choice> ALL_CHOICES = Arrays.asList(new Rock(), new Paper(), new Scissors());
 
 
-	public GameStrategy humanVSComputerStrategy() {
-		return new HumanVSComputerStrategy();
+	public Game humanVSComputerGame() {
+		return new HumanVSComputerGame();
 	}
 
-	public GameStrategy computerVSComputerStrategy() {
-		return new ComputerVSComputerStrategy();
+	public Game computerVSComputerGame() {
+		return new ComputerVSComputerGame();
 	}
 
 
-	public final class HumanVSComputerStrategy implements GameStrategy {
+	public final class HumanVSComputerGame implements Game {
 
 		@Override
 		public List<Choice> play(Option<Choice> option) {
@@ -35,7 +35,7 @@ public class GameStrategies {
 		}
 	}
 
-	public final class ComputerVSComputerStrategy implements GameStrategy {
+	public final class ComputerVSComputerGame implements Game {
 
 		@Override
 		public List<Choice> play(Option<Choice> option) {
