@@ -1,7 +1,6 @@
 package io.codelirium.game.gui;
 
-import io.codelirium.game.core.Game;
-import io.codelirium.game.core.Mode;
+import io.codelirium.game.core.GameStrategies;
 import io.codelirium.game.core.model.Choice;
 import io.codelirium.game.core.model.impl.Paper;
 import io.codelirium.game.core.model.impl.Rock;
@@ -9,6 +8,7 @@ import io.codelirium.game.core.model.impl.Scissors;
 import io.codelirium.game.core.option.Option;
 import io.codelirium.game.core.option.impl.None;
 import io.codelirium.game.core.option.impl.Some;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -17,8 +17,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.List;
 
-import static io.codelirium.game.core.Mode.COMPUTER_VS_COMPUTER;
-import static io.codelirium.game.core.Mode.HUMAN_VS_COMPUTER;
 import static java.util.Objects.nonNull;
 
 
@@ -26,8 +24,16 @@ import static java.util.Objects.nonNull;
 @Component
 public class GUILayout extends JFrame {
 
+	private GameStrategies gameStrategies;
 	private JPanel selectionPanel;
 	private JPanel statusPanel;
+
+
+	@Autowired
+	public GUILayout(GameStrategies gameStrategies) {
+		this.gameStrategies = gameStrategies;
+	}
+
 
 	@PostConstruct
 	public void init() {
@@ -107,36 +113,37 @@ public class GUILayout extends JFrame {
 
 		initSelectionAndStatusPanels();
 
-		displayGameResults(HUMAN_VS_COMPUTER, new Some<>(new Rock()));
+		displayGameResults(new Some<>(new Rock()));
 	}
 
 	private void paperButtonAction() {
 
 		initSelectionAndStatusPanels();
 
-		displayGameResults(HUMAN_VS_COMPUTER, new Some<>(new Paper()));
+		displayGameResults(new Some<>(new Paper()));
 	}
 
 	private void scissorsButtonAction() {
 
 		initSelectionAndStatusPanels();
 
-		displayGameResults(HUMAN_VS_COMPUTER, new Some<>(new Scissors()));
+		displayGameResults(new Some<>(new Scissors()));
 	}
 
 	private void computerVSComputerButtonAction() {
 
 		initSelectionAndStatusPanels();
 
-		displayGameResults(COMPUTER_VS_COMPUTER, new None<>());
+		displayGameResults(new None<>());
 	}
 
-	private void displayGameResults(Mode mode, Option<Choice> optionChoice) {
+	private void displayGameResults(Option<Choice> optionChoice) {
 
-		List<Choice> choices = new Game(mode).play(optionChoice);
+		List<Choice> choices = optionChoice.empty() ? gameStrategies.computerVSComputerStrategy().play(optionChoice) :
+																						gameStrategies.humanVSComputerStrategy().play(optionChoice);
 
 		String padding = "\t\t\t\t\t";
-		String playerOneString = mode.equals(COMPUTER_VS_COMPUTER) ? "Computer 1" : "Human 1";
+		String playerOneString = optionChoice.empty() ? "Computer 1" : "Human 1";
 		String playerOneStringPadded = String.format("%s: %s%s", playerOneString, choices.get(0).getName(), padding);
 		String playerTwoStringPadded = String.format("%sComputer 2: %s", padding, choices.get(1).getName());
 
