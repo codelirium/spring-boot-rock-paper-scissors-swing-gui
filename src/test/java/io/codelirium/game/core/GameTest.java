@@ -1,10 +1,13 @@
 package io.codelirium.game.core;
 
+import io.codelirium.game.core.model.Choice;
 import io.codelirium.game.core.option.impl.None;
 import io.codelirium.game.core.option.impl.Some;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.List;
 
 import static io.codelirium.game.core.GameMode.getRandomChoice;
 import static org.hamcrest.CoreMatchers.is;
@@ -17,7 +20,10 @@ public class GameTest {
 	@Test
 	public void testHumanVsComputerGameWhenHumanMakesAChoice() {
 		Game game = new GameMode().humanVSComputerGame();
-		assertThat(game.play(new Some<>(getRandomChoice())).size(), is(2));
+		Choice humanChoice = getRandomChoice();
+		List<Choice> gameChoices = game.play(new Some<>(humanChoice));
+		assertThat(gameChoices.size(), is(2));
+		assertThat(gameChoices.get(0), is(humanChoice));
 	}
 
 	@Test
