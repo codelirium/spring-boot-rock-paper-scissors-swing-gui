@@ -25,6 +25,7 @@ import static java.util.Objects.nonNull;
 public class GUILayout extends JFrame {
 
 	private GameMode gameMode;
+
 	private JPanel selectionPanel;
 	private JPanel statusPanel;
 
@@ -86,7 +87,7 @@ public class GUILayout extends JFrame {
 		getContentPane().add(modePanel, BorderLayout.PAGE_END);
 
 		humanVSComputerButton.addActionListener((ActionEvent event) -> humanVSComputerButtonAction());
-		computerVSComputerButton.addActionListener((ActionEvent event) -> computerVSComputerButtonAction());
+		computerVSComputerButton.addActionListener((ActionEvent event) -> addButtonAction(new None<>()));
 		quitButton.addActionListener((ActionEvent event) -> quitButtonAction());
 	}
 
@@ -104,37 +105,16 @@ public class GUILayout extends JFrame {
 
 		selectionPanel.setVisible(true);
 
-		rockButton.addActionListener((ActionEvent event) -> rockButtonAction());
-		paperButton.addActionListener((ActionEvent event) -> paperButtonAction());
-		scissorsButton.addActionListener((ActionEvent event) -> scissorsButtonAction());
+		rockButton.addActionListener((ActionEvent event) -> addButtonAction(new Some<>(new Rock())));
+		paperButton.addActionListener((ActionEvent event) -> addButtonAction(new Some<>(new Paper())));
+		scissorsButton.addActionListener((ActionEvent event) -> addButtonAction(new Some<>(new Scissors())));
 	}
 
-	private void rockButtonAction() {
+	private void addButtonAction(Option<Choice> option) {
 
 		initSelectionAndStatusPanels();
 
-		displayGameResults(new Some<>(new Rock()));
-	}
-
-	private void paperButtonAction() {
-
-		initSelectionAndStatusPanels();
-
-		displayGameResults(new Some<>(new Paper()));
-	}
-
-	private void scissorsButtonAction() {
-
-		initSelectionAndStatusPanels();
-
-		displayGameResults(new Some<>(new Scissors()));
-	}
-
-	private void computerVSComputerButtonAction() {
-
-		initSelectionAndStatusPanels();
-
-		displayGameResults(new None<>());
+		displayGameResults(option);
 	}
 
 	private void displayGameResults(Option<Choice> optionChoice) {
