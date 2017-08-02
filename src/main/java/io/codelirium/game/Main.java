@@ -10,7 +10,7 @@ import java.awt.*;
 @SpringBootApplication
 public class Main {
 
-	public static void main(String[] args) {
+	public static void main(final String[] args) {
 		EventQueue.invokeLater(() -> new SpringApplicationBuilder(Main.class)
 																	.headless(false)
 																	.run(args)

@@ -4,11 +4,15 @@ import io.codelirium.game.core.model.Choice;
 import io.codelirium.game.core.model.ChoiceObject;
 import io.codelirium.game.core.model.Result;
 
+import static io.codelirium.game.core.model.Result.LOSE;
+import static io.codelirium.game.core.model.Result.TIE;
+import static io.codelirium.game.core.model.Result.WIN;
+
 
 @ChoiceObject
 public class Scissors implements Choice {
 
-	static String NAME = "Scissors";
+	static String NAME = Scissors.class.getSimpleName();
 
 	@Override
 	public int getId() {
@@ -21,16 +25,16 @@ public class Scissors implements Choice {
 	}
 
 	@Override
-	public Result gameOnWith(Choice choice) {
+	public Result gameOnWith(final Choice choice) {
 
 		if (this.getId() == choice.getId()) {
-			return Result.TIE;
+			return TIE;
 		}
 
 		if (choice.getId() % 2 == 1) {
-			return Math.min(this.getId(), choice.getId()) == this.getId() ? Result.WIN : Result.LOSE;
+			return Math.min(this.getId(), choice.getId()) == this.getId() ? WIN : LOSE;
 		}
 
-		return Math.max(this.getId(), choice.getId()) == this.getId() ? Result.WIN : Result.LOSE;
+		return Math.max(this.getId(), choice.getId()) == this.getId() ? WIN : LOSE;
 	}
 }

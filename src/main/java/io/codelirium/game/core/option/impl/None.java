@@ -6,7 +6,7 @@ import io.codelirium.game.core.option.Option;
 public class None<T> implements Option<T> {
 
 	@Override
-	public T getOrElse(T defaultObject) {
+	public T getOrElse(final T defaultObject) {
 		return defaultObject;
 	}
 

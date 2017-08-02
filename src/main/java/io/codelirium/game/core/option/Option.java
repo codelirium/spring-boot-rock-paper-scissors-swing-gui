@@ -3,7 +3,7 @@ package io.codelirium.game.core.option;
 
 public interface Option<T> {
 
-	T getOrElse(T defaultObject);
+	T getOrElse(final T defaultObject);
 
 	boolean empty();
 }

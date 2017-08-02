@@ -2,15 +2,17 @@ package io.codelirium.game.core.model.impl;
 
 import io.codelirium.game.core.model.Choice;
 import io.codelirium.game.core.model.ChoiceObject;
-import io.codelirium.game.core.model.Result;
-import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.reflections.Reflections;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
+import static io.codelirium.game.core.model.Choice.CHOICE_IMPLEMENTATION_PACKAGE;
+import static io.codelirium.game.core.model.Result.*;
+import static io.codelirium.game.util.Utils.getObjectInstancesFromPackageAnnotatedWith;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -18,50 +20,49 @@ import static org.hamcrest.MatcherAssert.assertThat;
 @RunWith(SpringRunner.class)
 public class ModelTest {
 
-
 	@Test
 	public void testThatRockBeatsScissors() {
-		assertThat(new Rock().gameOnWith(new Scissors()), CoreMatchers.is(Result.WIN));
+		assertThat(new Rock().gameOnWith(new Scissors()), is(WIN));
 	}
 
 	@Test
 	public void testThatScissorsDoesNotBeatRock() {
-		assertThat(new Scissors().gameOnWith(new Rock()), is(Result.LOSE));
+		assertThat(new Scissors().gameOnWith(new Rock()), is(LOSE));
 	}
 
 	@Test
 	public void testThatPaperBeatsRock() {
-		assertThat(new Paper().gameOnWith(new Rock()), is(Result.WIN));
+		assertThat(new Paper().gameOnWith(new Rock()), is(WIN));
 	}
 
 	@Test
 	public void testThatRockDoesNotBeatPaper() {
-		assertThat(new Rock().gameOnWith(new Paper()), is(Result.LOSE));
+		assertThat(new Rock().gameOnWith(new Paper()), is(LOSE));
 	}
 
 	@Test
 	public void testThatScissorsBeatsPaper() {
-		assertThat(new Scissors().gameOnWith(new Paper()), is(Result.WIN));
+		assertThat(new Scissors().gameOnWith(new Paper()), is(WIN));
 	}
 
 	@Test
 	public void testThatPaperDoesNotBeatScissors() {
-		assertThat(new Paper().gameOnWith(new Scissors()), is(Result.LOSE));
+		assertThat(new Paper().gameOnWith(new Scissors()), is(LOSE));
 	}
 
 	@Test
 	public void testThatRockTiesRock() {
-		assertThat(new Rock().gameOnWith(new Rock()), is(Result.TIE));
+		assertThat(new Rock().gameOnWith(new Rock()), is(TIE));
 	}
 
 	@Test
 	public void testThatPaperTiesPaper() {
-		assertThat(new Paper().gameOnWith(new Paper()), is(Result.TIE));
+		assertThat(new Paper().gameOnWith(new Paper()), is(TIE));
 	}
 
 	@Test
 	public void testThatScissorsTiesScissors() {
-		assertThat(new Scissors().gameOnWith(new Scissors()), is(Result.TIE));
+		assertThat(new Scissors().gameOnWith(new Scissors()), is(TIE));
 	}
 
 	@Test
@@ -80,44 +81,34 @@ public class ModelTest {
 	}
 
 	@Test
-	public void testThatGameModelIsAndRemainsBalancedAndValidAfterPossibleExtension() throws Exception {
+	public void testThatGameModelIsAndRemainsBalancedAndValidAfterPossibleExtension() {
 
-		Set<Class<?>> modelclazzes = new Reflections(this.getClass()
-																.getPackage()
-																	.toString()
-																		.replace("package ", ""))
-																.getTypesAnnotatedWith(ChoiceObject.class);
+		final List<Choice> modelObjectInstances = getObjectInstancesFromPackageAnnotatedWith(CHOICE_IMPLEMENTATION_PACKAGE, ChoiceObject.class);
 
 
-		assertThatPossibleChoiceCountIsOdd(modelclazzes);
+		assertThatPossibleChoiceCountIsOdd(modelObjectInstances);
 
-		assertThatOneChoiceCanWinHalfOfTheRestChoices(modelclazzes);
+		assertThatOneChoiceCanWinHalfOfTheRestChoices(modelObjectInstances);
 
-		assertThatChoiceIdsStartFromOneAndAreContinousWithoutGaps(modelclazzes);
+		assertThatChoiceIdsStartFromOneAndAreContinuousWithoutGaps(modelObjectInstances);
 	}
 
-	private void assertThatPossibleChoiceCountIsOdd(Set<Class<?>> modelClazzes) {
+	private void assertThatPossibleChoiceCountIsOdd(final List<Choice> modelObjectInstances) {
 
-		assertThat(modelClazzes.size() % 2 == 1, is(Boolean.TRUE));
+		assertThat(modelObjectInstances.size() % 2 == 1, is(Boolean.TRUE));
 
 	}
 
-	private void assertThatOneChoiceCanWinHalfOfTheRestChoices(Set<Class<?>> modelClazzes) throws Exception {
+	private void assertThatOneChoiceCanWinHalfOfTheRestChoices(final List<Choice> modelObjectInstances) {
 
-		Set<Choice> choices = new LinkedHashSet<>(modelClazzes.size());
+		final int expectedBeatCount = (modelObjectInstances.size() - 1) / 2;
 
-		for (Class<?> modelClazz : modelClazzes) {
-			choices.add((Choice) modelClazz.newInstance());
-		}
-
-		int expectedBeatCount = (modelClazzes.size() - 1) / 2;
-
-		for (Choice outerChoice : choices) {
+		for (Choice outerChoice : modelObjectInstances) {
 
 			int actualBeatCount = 0;
 
-			for (Choice innerChoice : choices) {
-				if (outerChoice.gameOnWith(innerChoice) == Result.WIN) {
+			for (Choice innerChoice : modelObjectInstances) {
+				if (outerChoice.gameOnWith(innerChoice) == WIN) {
 					actualBeatCount++;
 				}
 			}
@@ -126,13 +117,9 @@ public class ModelTest {
 		}
 	}
 
-	private void assertThatChoiceIdsStartFromOneAndAreContinousWithoutGaps(Set<Class<?>> modelClazzes) throws Exception {
+	private void assertThatChoiceIdsStartFromOneAndAreContinuousWithoutGaps(final List<Choice> modelObjectInstances) {
 
-		List<Integer> modelObjectIds = new ArrayList<>(modelClazzes.size());
-
-		for (Class<?> modelClazz : modelClazzes) {
-			modelObjectIds.add(((Choice) modelClazz.newInstance()).getId());
-		}
+		final List<Integer> modelObjectIds = modelObjectInstances.stream().map(Choice::getId).collect(Collectors.toList());
 
 		Collections.sort(modelObjectIds);
 

@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface Game {
 
-	List<Choice> play(Option<Choice> option);
+	List<Choice> play(final Option<Choice> option);
 
 }
